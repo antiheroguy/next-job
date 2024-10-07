@@ -1,0 +1,37 @@
+services:
+  app:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "yarn && yarn dev"
+    ports:
+      - 3000:3000
+    environment:
+      REDIS_CONNECTION: redis://redis:6379
+  job:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    command: sh -c "yarn job:start"
+    depends_on:
+      - redis
+      - app
+    environment:
+      REDIS_CONNECTION: redis://redis:6379
+  mail:
+    image: maildev/maildev
+    container_name: maildev
+    ports:
+      - 1025:1025
+      - 8025:80
+    environment:
+      MAILDEV_SMTP_PORT: 1025
+      MAILDEV_WEB_PORT: 80
+      MAILDEV_INCOMING_USER: ''
+      MAILDEV_INCOMING_PASS: ''
+  redis:
+    image: redis:6
+    ports:
+      - 6379:6379
