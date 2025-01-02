@@ -1,4 +1,5 @@
 import { createTransport } from 'nodemailer';
+import { logInfo } from '@/utils/logger';
 
 export const sendEmail = async (text: string) => {
 	const transporter = createTransport({
@@ -13,4 +14,6 @@ export const sendEmail = async (text: string) => {
 		subject: 'Alert',
 		text,
 	});
+
+	logInfo({ message: `Email sent at ${new Date()}` });
 };
